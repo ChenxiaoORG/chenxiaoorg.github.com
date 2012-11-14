@@ -1,0 +1,38 @@
+---
+layout: default
+title: 尝试编写Python的C扩展
+---
+
+<h4>一个加法方法示例</h4>
+{% highlight python %}
+>>> import my
+>>> my.add(1,2)
+3
+{% endhighlight %}
+
+<h4>实现代码</h4>
+{% highlight c %}
+#include "Python.h"
+#include <stdlib.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+static PyObject *
+add(PyObject *self,PyObject *args){
+    const int *x;
+    const int *y;
+    if (!PyArg_ParseTuple(args, "ii", &x, &y))
+        return NULL;
+    return Py_BuildValue("i",x+y);
+}
+
+PyMethodDef methods[] = {
+  {"add", add, METH_VARARGS},
+}
+
+void initpycabinet(){
+    PyObject* m;
+    m = Py_InitModule("my", methods);
+}
+{% endhighlight %}
+
